@@ -22,3 +22,4 @@ SELECT ~ ;
 -- 集計処理3
 SELECT ~ ;
 COMMIT;                              -- ロック解除される
+
