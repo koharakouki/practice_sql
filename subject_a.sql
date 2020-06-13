@@ -243,7 +243,7 @@ SELECT 口座番号, 名義,
  FROM 口座
 
 -- 41
-SELECT LENGTH(口座番号), LENGTH(REPRACE(名義, '  ', '')), LENGTH(CAST(残高, AS VARCHAR))
+SELECT LENGTH(口座番号), LENGTH(REPLACE(名義, '  ', '')), LENGTH(CAST(残高, AS VARCHAR))
   FROM 口座
 
 -- 42
@@ -267,8 +267,8 @@ SELECT 口座番号, 残高,
   CASE WHEN 残高 < 500000 THEN TRUNK(残高 * 0.0001, 0)
        WHEN 残高 >= 500000 AND 残高 < 2000000 THEN TRUNK(残高 * 0.0002, 0)
        WHEN 残高 >= 2000000 THEN TRUNK(残高 * 0.0003, 0)
-  END AS 残高別利息
- FROM 口座
+   END AS 残高別利息
+  FROM 口座
  ORDER BY 残高別利息 DESC, 口座番号
 
 -- 46
@@ -296,4 +296,53 @@ SELECT COALESCE(CAST(更新日 AS VARCHAR), '設定なし') AS 更新日
 
 -- LEVEL5
 -- 49
+SELECT SUM(残高) AS 合計, MAX(残高) AS 最高, MIN(残高) AS 最低, AVG(残高) AS 平均, COUNT(*) AS 件数
+  FROM 口座
 
+-- 50
+SELECT COUNT(*) AS 件数
+  FROM 口座
+ WHERE 種別 NOT IN ('1')
+   AND 残高 >= 1000000
+   AND 更新日 < '2018-01-01'
+
+-- 51
+SELECT COUNT(*) - COUNT(更新日) AS 未登録件数
+  FROM 口座
+
+-- 52
+SELECT MAX(名義) AS 最大値, MIN(名義) AS 最小値
+  FROM 口座
+
+-- 53
+SELECT MAX(更新日) AS 最大値, MIN(更新日) AS 最小値
+  FROM 口座
+
+-- 54
+SELECT 種別, SUM(残高) AS 合計, MAX(残高) AS 最高, MIN(残高) AS 最低, AVG(残高) AS 平均, COUNT(*) AS 件数
+  FROM 口座
+ GROUP BY 種別
+
+-- 55
+SELECT SUBSTRING(口座番号, 7, 1) AS 口座番号グループ, COUNT(*) AS 件数
+  FROM 口座
+ GROUP BY SUBSTRING(口座番号, 7, 1)
+ ORDER BY 件数 DESC
+
+-- 56
+SELECT SUBSTRING(COALESCE(CAST(更新日 AS VARCHAR), 'XXXX') 1, 4) AS 更新年, SUM(残高) AS 合計, MAX(残高) AS 最高, MIN(残高) AS 最低, AVG(残高) AS 平均, COUNT(*) AS 件数
+  FROM 口座
+ GROUP BY SUBSTRING(COALESCE(CAST(更新日 AS VARCHAR), 'XXXX') 1, 4)
+
+-- 57
+SELECT 種別, SUM(残高) AS 合計, COUNT(*) AS 件数
+  FROM 口座
+  GROUP BY 種別
+ HAVING SUM(残高) > 3000000
+
+-- 58
+SELECT SUBSTRING(名義, 1, 1) AS 名義, COUNT(名義) AS データ件数, AVG(LENGTH(REPLACE(名義, '  ', '')) AS 名義文字数の平均
+  FROM 口座
+ GROUP BY SUBSTRING(名義, 1, 1)
+HAVING COUNT(名義) >= 10
+    OR AVG(LENGTH(REPLACE(名義, '  ', '')) > 5
