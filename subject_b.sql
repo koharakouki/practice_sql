@@ -288,3 +288,62 @@ UPDATE 廃番商品
 SELECT TRUNC(単価*0.7, 0) AS 値下げした単価, 商品コード, 商品名, 単価 AS 現在の単価
   FROM 商品
  WHERE 単価 >= 10000
+
+-- 46
+SELECT SUM(数量) AS 数量合計
+  FROM 注文
+
+-- 47
+SELECT 注文日, SUM(数量) AS 数量合計
+  FROM 注文
+ GROUP BY 注文日
+ ORDER BY 注文日
+
+-- 48
+SELECT 商品区分, MIN(単価) AS 最小額, MAX(単価) AS 最大額
+  FROM 商品
+ GROUP BY 商品区分
+ ORDER BY 商品区分
+
+-- 49
+SELECT 商品コード, SUM(数量) AS 数量合計
+  FROM 注文
+ GROUP BY 商品コード
+ ORDER BY 商品コード
+
+-- 50
+SELECT 商品コード, SUM(数量) AS 数量合計
+  FROM 注文
+ GROUP BY 商品コード
+ ORDER BY 数量合計 DESC, 商品コード
+ OFFSET 0 ROWS
+ FETCH NEXT 10 ROWS ONLY
+
+-- 51
+SELECT 商品コード, SUM(数量) AS 数量合計
+  FROM 注文
+ GROUP BY 商品コード
+HAVING SUM(数量) < 5
+
+-- 52
+SELECT COUNT(クーポン割引料) AS クーポン利用注文件数, SUM(クーポン割引料) AS 割引額合計
+  FROM 注文
+
+-- 53
+SELECT SUBSTRING(注文日, 1, 6) AS 年月, COUNT(*) AS 注文件数
+  FROM 注文
+ WHERE 注文枝番 = 1
+ GROUP BY SUBSTRING(注文日, 1, 6)
+ ORDER BY SUBSTRING(注文日, 1, 6)
+
+-- 54
+SELECT 商品コード
+  FROM 注文
+ WHERE SUBSTRING(商品コード, 1, 1) = 'Z'
+ GROUP BY 商品コード
+ HAVING SUM(数量) >= 100
+
+
+
+-- LEVEL5
+-- 55
