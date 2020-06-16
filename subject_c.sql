@@ -399,3 +399,45 @@ VALUES ((SELECT イベント番号
 
 -- LEVEL7
 -- 62
+SELECT K.ルート番号, K.イベント番号, I.イベント名称, K.クリア結果
+  FROM 経験イベント AS K
+  JOIN イベント AS I
+    ON K.イベント番号 = I.イベント番号
+ WHERE K.クリア区分 = '1'
+ ORDER BY K.ルート番号
+
+-- 63
+SELECT M.イベント番号, M.イベント名称, E.クリア区分
+  FROM イベント AS M
+  JOIN 経験イベント AS E
+    ON M.イベント番号 = E.イベント番号
+ WHERE タイプ = '1'
+
+-- 64
+SELECT M.イベント番号, M.イベント名称, COALESCE(E.クリア区分, '未クリア')
+  FROM イベント AS M
+  LEFT JOIN 経験イベント AS E
+    ON M.イベント番号 = E.イベント番号
+ WHERE タイプ = '1'
+
+-- 65
+SELECT P.ID, P.名称 AS なまえ, S.コード名称 AS 職業, J.コード名称 AS 状態
+  FROM パーティー AS P
+  JOIN (SELECT コード値, コード名称
+  	      FROM コード
+  	     WHERE コード種別 ='1') AS S
+    ON P.職業コード = S.コード値
+  JOIN (SELECT コード値, コード名称
+          FROM コード
+         WHERE コード種別 ='2') AS J
+    ON P.状態コード = J.コード値
+ ORDER BY ID
+
+-- 66
+SELECT P.ID, COALESCE(P.名称, ' 仲間になっていない! ') AS なまえ, S.コード名称 AS 職業
+  FROM パーティー AS P
+ RIGHT JOIN (SELECT コード値, コード名称
+ 	             FROM コード
+ 	            WHERE コード種別 ='1') AS S
+    ON P.職業コード = S.コード値
+
