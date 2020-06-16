@@ -441,3 +441,38 @@ SELECT P.ID, COALESCE(P.名称, ' 仲間になっていない! ') AS なまえ, 
  	            WHERE コード種別 ='1') AS S
     ON P.職業コード = S.コード値
 
+-- 67
+SELECT E.イベント番号, E.クリア区分, C.コード値 || ':' || C.コード名称 AS クリア結果
+  FROM 経験イベント AS E
+  FULL JOIN (SELECT コード値, コード名称
+  	           FROM コード
+              WHERE コード種別 ='4') AS C
+    ON E.クリア結果 = C.コード値
+
+-- 68
+SELECT E1.イベント番号, E1.イベント名称, E1.前提イベント番号, E2.イベント名称 AS 前提イベント名称
+  FROM イベント AS E1
+  JOIN イベント AS E2
+    ON E1.前提イベント番号 = E2.イベント番号
+ WHERE E1.前提イベント番号 IS NOT NULL
+
+-- 69
+SELECT E1.イベント番号, E1.イベント名称, E1.前提イベント番号, E2イベント名称 AS 前提イベント名称,
+       E1.後続イベント番号, E3.イベント名称 AS 後続イベント名称
+  FROM イベント AS E1
+  LEFT JOIN イベント AS E2
+    ON E1.前提イベント番号 = E2.イベント番号
+  LEFT JOIN イベント AS E3
+    ON E1.後続イベント番号 = E3.イベント番号
+ WHERE E1.前提イベント番号 IS NOT NULL
+    OR E1.後続イベント番号 IS NOT NULL
+
+-- 70
+SELECT E.イベント番号, E.イベント名称, Z.前提イベント数
+  FROM イベント AS E
+  JOIN (SELECT 前提イベント番号, COUNT( 前提イベント番号 ) AS 前提イベント数
+          FROM イベント
+         WHERE 前提イベント番号 IS NOT NULL
+         GROUP BY 前提イベント番号 ) AS Z
+    ON E.イベント番号 = Z.前提イベント番号
+ ORDER BY E.イベント番号
